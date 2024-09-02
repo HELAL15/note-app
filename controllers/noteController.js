@@ -20,9 +20,12 @@ exports.getAllNotes = (req, res) => {
 exports.getNote = (req, res) => {
     const { id: noteId } = req.params;
     if (!noteId) {
-        res.status(500).send({ status: "failed", msg: "the id of note is missed" });
+        res.status(400).send({ status: "failed", msg: "the id of note is missed" });
     }
     var values = memStorage.store.getItem(noteId);
+    if (!values) {
+        res.status(400).send({ status: "failed", msg: "this note not exist" });
+    }
     return res.status(200).send( {
         status: "success",
         msg: "Note retrieved successfully",
@@ -39,7 +42,7 @@ exports.createNote = (req, res) => {
     const { title, content } = req.body; 
 
     if (!title || !content) {
-        res.status(500).send({ status: "failed", msg: "Please enter title and content" });
+        res.status(400).send({ status: "failed", msg: "Please enter title and content" });
     }
 
     var Note = model.Note;
@@ -59,11 +62,11 @@ exports.updateNote = (req, res) => {
     const { id: noteId } = req.params;
 
     if (!noteId) {
-        res.status(500).send({ status: "failed", msg: "the id of note is missed" });
+        res.status(400).send({ status: "failed", msg: "the id of note is missed" });
     }
 
     if (!title || !content) {
-        res.status(500).send({ status: "failed", msg: "Please enter title and content" });
+        res.status(400).send({ status: "failed", msg: "Please enter title and content" });
     }
 
     var Note = model.Note;
@@ -79,9 +82,12 @@ exports.updateNote = (req, res) => {
 exports.deleteNote = (req, res) => {
     const { id: noteId } = req.params;
     if (!noteId) {
-        res.status(500).send({ status: "failed", msg: "the id of note is missed" });
+        res.status(400).send({ status: "failed", msg: "the id of note is missed" });
     }
     var values = memStorage.store.removeItem(noteId);
+    if (!values) {
+        res.status(400).send({ status: "failed", msg: "this note not exist" });
+    }
     return res.status(200).send( {
         status: "success",
         msg: "Note removed successfully",
